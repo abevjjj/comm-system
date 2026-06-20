@@ -1,0 +1,19 @@
+{
+  "name": "comm-server",
+  "version": "1.0.0",
+  "description": "局域网通信系统服务端",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "iconv-lite": "^0.6.3",
+    "ws": "^8.18.0"
+  }
+}

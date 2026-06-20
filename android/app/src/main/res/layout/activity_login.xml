@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D1117"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▣"
+            android:textColor="#58A6FF"
+            android:textSize="40sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="消息调度台"
+            android:textColor="#E6EDF3"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="28dp"
+            android:text="局域网消息 · 打印调度系统"
+            android:textColor="#6E7681"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/connStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:gravity="center"
+            android:text="正在检测服务器连接…"
+            android:textColor="#D29922"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/serverUrlInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input"
+            android:hint="服务器地址 http://192.168.1.x:3000"
+            android:textColorHint="#6E7681"
+            android:inputType="textUri"
+            android:paddingHorizontal="12dp"
+            android:textColor="#E6EDF3"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/usernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input"
+            android:hint="账号"
+            android:textColorHint="#6E7681"
+            android:inputType="text"
+            android:paddingHorizontal="12dp"
+            android:textColor="#E6EDF3"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/bg_input"
+            android:hint="密码"
+            android:textColorHint="#6E7681"
+            android:inputType="textPassword"
+            android:paddingHorizontal="12dp"
+            android:textColor="#E6EDF3"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="设备类型（决定后台保活策略）"
+            android:textColor="#6E7681"
+            android:textSize="11sp"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/deviceRoleGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <RadioButton
+                android:id="@+id/roleRadioPhone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="手机"
+                android:textColor="#E6EDF3"
+                android:textSize="13sp"
+                android:checked="true"
+                android:buttonTint="#58A6FF" />
+
+            <RadioButton
+                android:id="@+id/roleRadioTabletPc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="平板 / Android电脑"
+                android:textColor="#E6EDF3"
+                android:textSize="13sp"
+                android:buttonTint="#58A6FF" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/deviceRoleHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="手机模式：节省电量，系统可能在长时间后台后回收连接"
+            android:textColor="#6E7681"
+            android:textSize="10.5sp" />
+
+        <TextView
+            android:id="@+id/loginErrorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_error"
+            android:padding="10dp"
+            android:textColor="#FF9892"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_btn_primary"
+            android:text="登录"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="账号由管理员统一创建"
+            android:textColor="#6E7681"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+</ScrollView>

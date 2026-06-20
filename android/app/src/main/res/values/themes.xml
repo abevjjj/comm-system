@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.CommSystem" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryDark">@color/bg0</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/bg0</item>
+        <item name="android:textColorPrimary">@color/text0</item>
+        <item name="android:textColorSecondary">@color/text1</item>
+    </style>
+
+    <!-- 悬浮弹窗专用主题：透明背景、无标题栏，承载覆盖全屏的提醒弹窗 -->
+    <style name="Theme.CommSystem.Popup" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
+
+</resources>

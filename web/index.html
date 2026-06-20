@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>消息调度台</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== 登录页 ===== -->
+<div id="loginView" class="view login-view">
+  <div class="login-card">
+    <div class="login-mark">
+      <span class="mark-glyph">▣</span>
+    </div>
+    <h1 class="login-title">消息调度台</h1>
+    <p class="login-sub">局域网消息 · 打印调度系统</p>
+
+    <form id="loginForm" class="login-form">
+      <label class="field">
+        <span class="field-label">账号</span>
+        <input type="text" id="loginUsername" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span class="field-label">密码</span>
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+      </label>
+      <div id="loginError" class="login-error" hidden></div>
+      <button type="submit" class="btn btn-primary btn-block">登录</button>
+    </form>
+    <div class="login-foot">账号由管理员统一创建</div>
+  </div>
+</div>
+
+<!-- ===== 主界面 ===== -->
+<div id="mainView" class="view main-view" hidden>
+
+  <!-- 顶部状态条 -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="mark-glyph small">▣</span>
+      <span class="topbar-title">消息调度台</span>
+      <span id="connDot" class="conn-dot offline" title="连接状态"></span>
+      <span id="connLabel" class="conn-label">连接中…</span>
+    </div>
+    <div class="topbar-right">
+      <span id="meName" class="me-name"></span>
+      <button id="adminBtn" class="icon-btn" title="管理后台" hidden>⚙</button>
+      <button id="logoutBtn" class="icon-btn" title="退出登录">⏻</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- 左侧联系人列表 -->
+    <aside class="sidebar">
+      <div class="sidebar-head">联系人</div>
+      <ul id="userList" class="user-list"></ul>
+    </aside>
+
+    <!-- 右侧消息区 -->
+    <main class="chat-pane">
+      <div id="chatEmpty" class="chat-empty">
+        <span class="mark-glyph large">▣</span>
+        <p>选择左侧联系人开始通信</p>
+      </div>
+
+      <div id="chatActive" class="chat-active" hidden>
+        <div class="chat-head">
+          <span id="chatPeerName" class="chat-peer-name"></span>
+          <span id="chatPeerMeta" class="chat-peer-meta"></span>
+        </div>
+        <div id="messageList" class="message-list"></div>
+        <form id="sendForm" class="send-form">
+          <textarea id="sendInput" class="send-input" placeholder="输入消息，Enter 发送，Shift+Enter 换行" rows="1"></textarea>
+          <button type="submit" class="btn btn-primary send-btn">发送</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ===== 管理后台抽屉 ===== -->
+<div id="adminDrawer" class="drawer" hidden>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="drawer-panel">
+    <div class="drawer-head">
+      <span class="drawer-title">管理后台</span>
+      <button id="drawerClose" class="icon-btn">✕</button>
+    </div>
+
+    <div class="drawer-tabs">
+      <button class="tab-btn active" data-tab="users">用户管理</button>
+      <button class="tab-btn" data-tab="settings">全局设置</button>
+    </div>
+
+    <!-- 用户管理 -->
+    <div id="tabUsers" class="tab-panel active">
+      <button id="newUserBtn" class="btn btn-secondary btn-block">＋ 新建用户</button>
+      <div id="adminUserList" class="admin-user-list"></div>
+    </div>
+
+    <!-- 全局设置 -->
+    <div id="tabSettings" class="tab-panel">
+      <label class="field">
+        <span class="field-label">打印字体大小</span>
+        <select id="fontSizeSelect" class="select">
+          <option value="normal">标准</option>
+          <option value="double_height">加高（正文）</option>
+          <option value="double_width">加宽（正文）</option>
+          <option value="double_both">加倍（正文）</option>
+        </select>
+      </label>
+      <button id="saveSettingsBtn" class="btn btn-primary">保存设置</button>
+      <div id="settingsMsg" class="hint" hidden></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 新建/编辑用户 弹层 ===== -->
+<div id="userModal" class="drawer" hidden>
+  <div class="drawer-backdrop" id="userModalBackdrop"></div>
+  <div class="modal-panel">
+    <div class="drawer-head">
+      <span id="userModalTitle" class="drawer-title">新建用户</span>
+      <button id="userModalClose" class="icon-btn">✕</button>
+    </div>
+    <form id="userForm" class="user-form">
+      <input type="hidden" id="userFormId">
+      <label class="field">
+        <span class="field-label">用户名</span>
+        <input type="text" id="userFormUsername" required>
+      </label>
+      <label class="field">
+        <span class="field-label" id="userFormPasswordLabel">密码</span>
+        <input type="password" id="userFormPassword" autocomplete="new-password">
+      </label>
+      <label class="field">
+        <span class="field-label">角色</span>
+        <select id="userFormRole" class="select">
+          <option value="member">普通用户</option>
+          <option value="admin">管理员</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">打印机 IP（80mm 网络热敏打印机）</span>
+        <input type="text" id="userFormPrinterIp" placeholder="192.168.1.234">
+      </label>
+      <label class="field">
+        <span class="field-label">打印机端口</span>
+        <input type="number" id="userFormPrinterPort" value="9100">
+      </label>
+      <label class="switch-row">
+        <span>消息弹窗提醒（覆盖全部应用）</span>
+        <input type="checkbox" id="userFormPopup" checked>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </label>
+      <label class="switch-row">
+        <span>自动打印收到的消息</span>
+        <input type="checkbox" id="userFormPrint" checked>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </label>
+      <div id="userFormError" class="login-error" hidden></div>
+      <div class="modal-actions">
+        <button type="button" id="userFormDelete" class="btn btn-danger" hidden>删除用户</button>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

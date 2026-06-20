@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp">
+
+    <View
+        android:id="@+id/contactDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/dot_offline" />
+
+    <TextView
+        android:id="@+id/contactName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:textColor="#E6EDF3"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/contactRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#6E7681"
+        android:textSize="11sp" />
+
+</LinearLayout>
