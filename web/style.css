@@ -1,23 +1,23 @@
 /* ============================================
-   消息调度台 - 视觉系统
-   色板: 深空背景 / 面板灰 / 蓝主色 / 绿在线 / 红失败
+   消息调度台 - 视觉系统（浅色）
+   色板: 米白背景 / 浅灰面板 / 蓝主色 / 绿在线 / 红失败
    字体: IBM Plex Mono（界面即数据的调度系统气质）
    ============================================ */
 
 :root {
-  --bg-0: #0d1117;
-  --bg-1: #161b22;
-  --bg-2: #1c2129;
-  --border: #30363d;
-  --border-soft: #21262d;
-  --text-0: #e6edf3;
-  --text-1: #9aa6b2;
-  --text-2: #6e7681;
-  --accent: #58a6ff;
-  --accent-dim: #1f6feb;
-  --ok: #3fb950;
-  --warn: #d29922;
-  --bad: #f85149;
+  --bg-0: #f6f7f9;
+  --bg-1: #ffffff;
+  --bg-2: #eef0f3;
+  --border: #d7dbe1;
+  --border-soft: #e7e9ed;
+  --text-0: #1c2129;
+  --text-1: #5b6573;
+  --text-2: #8a93a1;
+  --accent: #2f6fed;
+  --accent-dim: #1f57c9;
+  --ok: #1a8f4c;
+  --warn: #a6690a;
+  --bad: #d6342c;
   --radius: 6px;
   --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 }
@@ -90,7 +90,7 @@ input, textarea, select, button {
   border-color: var(--bad);
   color: var(--bad);
 }
-.btn-danger:hover { background: rgba(248,81,73,0.1); }
+.btn-danger:hover { background: rgba(214,52,44,0.08); }
 
 .icon-btn {
   appearance: none;
@@ -120,9 +120,9 @@ input, textarea, select, button {
 .field input:focus, .select:focus { border-color: var(--accent); }
 
 .login-error {
-  background: rgba(248,81,73,0.1);
-  border: 1px solid rgba(248,81,73,0.35);
-  color: #ff9892;
+  background: rgba(214,52,44,0.08);
+  border: 1px solid rgba(214,52,44,0.3);
+  color: #b91c1c;
   padding: 8px 10px;
   border-radius: var(--radius);
   font-size: 12.5px;
@@ -139,8 +139,8 @@ input, textarea, select, button {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(circle at 20% 20%, rgba(88,166,255,0.06), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(63,185,80,0.04), transparent 40%),
+    radial-gradient(circle at 20% 20%, rgba(47,111,237,0.05), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(26,143,76,0.04), transparent 40%),
     var(--bg-0);
 }
 .login-card {
@@ -176,9 +176,9 @@ input, textarea, select, button {
 .conn-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--bad);
-  box-shadow: 0 0 0 3px rgba(248,81,73,0.15);
+  box-shadow: 0 0 0 3px rgba(214,52,44,0.15);
 }
-.conn-dot.online { background: var(--ok); box-shadow: 0 0 0 3px rgba(63,185,80,0.15); }
+.conn-dot.online { background: var(--ok); box-shadow: 0 0 0 3px rgba(26,143,76,0.15); }
 .conn-label { font-size: 11.5px; color: var(--text-2); }
 .topbar-right { display: flex; align-items: center; gap: 8px; }
 .me-name { font-size: 12.5px; color: var(--text-1); margin-right: 4px; }
@@ -269,7 +269,7 @@ input, textarea, select, button {
   border-radius: 8px;
   padding: 8px 11px;
 }
-.msg-row.mine .msg-bubble { background: rgba(31,111,235,0.14); border-color: rgba(31,111,235,0.35); }
+.msg-row.mine .msg-bubble { background: rgba(47,111,237,0.08); border-color: rgba(47,111,237,0.28); }
 .msg-text { font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
 .msg-meta {
   margin-top: 5px;
@@ -292,15 +292,15 @@ input, textarea, select, button {
   appearance: none;
   margin-top: 8px;
   border: 1px solid var(--accent-dim);
-  background: rgba(31,111,235,0.12);
-  color: var(--accent);
+  background: rgba(47,111,237,0.08);
+  color: var(--accent-dim);
   border-radius: 5px;
   padding: 4px 10px;
   font-size: 11px;
   font-family: var(--mono);
   cursor: pointer;
 }
-.ack-btn:hover { background: rgba(31,111,235,0.22); }
+.ack-btn:hover { background: rgba(47,111,237,0.15); }
 .ack-btn:disabled { opacity: 0.6; cursor: default; }
 
 .send-form {
@@ -423,7 +423,7 @@ input, textarea, select, button {
   background: var(--text-2);
   transition: transform .15s ease, background .15s ease;
 }
-.switch-row input:checked + .switch-track { border-color: var(--accent-dim); background: rgba(31,111,235,0.18); }
+.switch-row input:checked + .switch-track { border-color: var(--accent-dim); background: rgba(47,111,237,0.12); }
 .switch-row input:checked + .switch-track .switch-thumb { transform: translateX(16px); background: var(--accent); }
 
 .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; gap: 10px; }
@@ -434,9 +434,47 @@ input, textarea, select, button {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-2); }
 
-/* ---------- 响应式 ---------- */
+/* ---------- 响应式（手机端）---------- */
+/* 设计：联系人列表与聊天区在桌面端并排显示；
+   手机宽度下改为"二选一全屏"——默认显示联系人列表，
+   选中联系人后聊天区全屏覆盖，顶栏出现返回按钮可回到列表。
+   通过 .layout 上的 .chat-open class 控制当前显示哪一层。 */
+
+.mobile-only { display: none; }
+
 @media (max-width: 720px) {
-  .sidebar { position: fixed; left: 0; top: 50px; bottom: 0; z-index: 30; transform: translateX(-100%); transition: transform .2s ease; }
-  .sidebar.open { transform: translateX(0); }
+  .mobile-only { display: inline-flex; }
+
+  .layout {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transition: transform .2s ease;
+  }
+
+  .chat-pane {
+    width: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--bg-0);
+    transform: translateX(100%);
+    transition: transform .2s ease;
+  }
+
+  /* 选中联系人后，聊天区滑入覆盖列表 */
+  .layout.chat-open .sidebar {
+    transform: translateX(-100%);
+  }
+  .layout.chat-open .chat-pane {
+    transform: translateX(0);
+  }
+
   .msg-bubble { max-width: 80%; }
 }

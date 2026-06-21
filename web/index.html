@@ -39,6 +39,7 @@
   <!-- 顶部状态条 -->
   <header class="topbar">
     <div class="topbar-left">
+      <button id="mobileBackBtn" class="icon-btn mobile-only" title="返回联系人" hidden>‹</button>
       <span class="mark-glyph small">▣</span>
       <span class="topbar-title">消息调度台</span>
       <span id="connDot" class="conn-dot offline" title="连接状态"></span>
@@ -53,13 +54,13 @@
 
   <div class="layout">
     <!-- 左侧联系人列表 -->
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
       <div class="sidebar-head">联系人</div>
       <ul id="userList" class="user-list"></ul>
     </aside>
 
     <!-- 右侧消息区 -->
-    <main class="chat-pane">
+    <main id="chatPane" class="chat-pane">
       <div id="chatEmpty" class="chat-empty">
         <span class="mark-glyph large">▣</span>
         <p>选择左侧联系人开始通信</p>

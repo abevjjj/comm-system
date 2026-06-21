@@ -76,11 +76,14 @@ router.post('/', async (req, res) => {
   db.prepare('UPDATE messages SET delivered_ws = ? WHERE id = ?').run(popupSent ? 1 : 0, messageId);
 
   // ---- ② 打印：仅当 receiver.print_enabled 开启，服务端直接发起，不依赖客户端在线 ----
+  let initialPrintStatus;
   if (receiver.print_enabled) {
     if (!receiver.printer_ip) {
+      initialPrintStatus = 'failed';
       db.prepare('UPDATE messages SET print_status = ?, print_error = ? WHERE id = ?')
         .run('failed', '该用户未配置打印机IP', messageId);
     } else {
+      initialPrintStatus = 'pending';
       // 异步执行，不阻塞消息发送的响应；打印结果回写状态
       printMessage({
         printerIp: receiver.printer_ip,
@@ -98,10 +101,16 @@ router.post('/', async (req, res) => {
       });
     }
   } else {
+    initialPrintStatus = 'skipped';
     db.prepare('UPDATE messages SET print_status = ? WHERE id = ?').run('skipped', messageId);
   }
 
-  res.status(201).json({ message: messagePayload.message });
+  // 响应中带上发消息那一刻就能确定的真实初始状态（skipped/failed/pending），
+  // 不能让前端凭空猜测显示"打印中"——之前的bug就是前端硬编码了pending，
+  // 导致接收方未开启打印或未配置打印机时，发送方仍会误以为消息正在打印
+  res.status(201).json({
+    message: { ...messagePayload.message, printStatus: initialPrintStatus }
+  });
 });
 
 // GET /api/messages?with=<userId>&limit=50  获取与某用户的历史消息（双向）

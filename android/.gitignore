@@ -9,7 +9,3 @@ captures/
 .cxx/
 *.apk
 *.aab
-
-# Gradle wrapper jar 由 CI 自动生成（gradle wrapper 命令），无需手动提交；
-# 若你已在本地生成并希望固定版本，可移除下面这行后自行提交 gradle-wrapper.jar
-gradle/wrapper/gradle-wrapper.jar

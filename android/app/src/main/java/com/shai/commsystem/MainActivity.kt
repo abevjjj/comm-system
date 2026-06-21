@@ -58,8 +58,10 @@ class MainActivity : AppCompatActivity() {
 
             val peer = activePeer
             if (peer != null && senderId == peer.id) {
+                // 接收方视角：打印状态由服务端异步处理，此处只是本地即时回显消息内容，
+                // 不对打印结果做任何猜测，避免显示不准确的状态
                 currentMessages.add(
-                    ChatMessage(messageId, senderId, senderName, myUserId, content, createdAt, "pending", "unread")
+                    ChatMessage(messageId, senderId, senderName, myUserId, content, createdAt, null, "unread")
                 )
                 messageAdapter.update(currentMessages)
             }
@@ -319,7 +321,9 @@ class MainActivity : AppCompatActivity() {
                         m.getInt("receiverId"),
                         m.getString("content"),
                         m.optString("createdAt", ""),
-                        "pending",
+                        // 使用服务端返回的真实初始打印状态(skipped/failed/pending)，
+                        // 不再硬编码"pending"，避免对方未开启打印时误显示"打印中"
+                        if (m.isNull("printStatus")) null else m.optString("printStatus"),
                         "unread"
                     )
                 )

@@ -36,6 +36,8 @@ const chatPeerMeta = $('chatPeerMeta');
 const messageListEl = $('messageList');
 const sendForm = $('sendForm');
 const sendInput = $('sendInput');
+const layoutEl = document.querySelector('.layout');
+const mobileBackBtn = $('mobileBackBtn');
 
 // ---------------- 工具函数 ----------------
 
@@ -151,6 +153,10 @@ logoutBtn.addEventListener('click', async () => {
   clearSession();
   if (state.ws) state.ws.close();
   location.reload();
+});
+
+mobileBackBtn.addEventListener('click', () => {
+  backToContactList();
 });
 
 // ---------------- WebSocket：实时推送 + 自动重连 ----------------
@@ -303,6 +309,10 @@ async function openChat(user) {
   chatPeerName.textContent = user.username;
   chatPeerMeta.textContent = user.printer_ip ? `打印机: ${user.printer_ip}` : '未配置打印机';
 
+  // 手机端：聊天区滑入覆盖联系人列表，并显示返回按钮
+  layoutEl.classList.add('chat-open');
+  mobileBackBtn.hidden = false;
+
   messageListEl.innerHTML = '<div class="hint" style="padding:8px 0;">加载中…</div>';
   try {
     const { messages } = await api(`/api/messages?with=${user.id}&limit=100`);
@@ -312,6 +322,12 @@ async function openChat(user) {
   } catch (e) {
     messageListEl.innerHTML = `<div class="hint">加载失败: ${e.message}</div>`;
   }
+}
+
+/** 手机端：从聊天区返回联系人列表 */
+function backToContactList() {
+  layoutEl.classList.remove('chat-open');
+  mobileBackBtn.hidden = true;
 }
 
 function normalizeMsg(row) {
@@ -415,7 +431,10 @@ sendForm.addEventListener('submit', async (e) => {
       method: 'POST',
       body: { receiverId: state.activePeerId, content },
     });
-    appendMessageToView({ ...message, printStatus: 'pending' });
+    // message.printStatus 由服务端在发消息那一刻就计算好返回
+    // （skipped=对方未开启打印, failed=对方未配置打印机, pending=正在打印），
+    // 不再硬编码为'pending'，避免对方未开启打印时误显示"打印中"
+    appendMessageToView(message);
     scrollMessagesToBottom();
   } catch (err) {
     alert('发送失败: ' + err.message);
