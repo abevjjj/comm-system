@@ -50,15 +50,6 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- 悬浮窗弹出消息的Activity，用透明主题承载，覆盖在其他应用之上
-             锁屏可见性通过代码中 Window.addFlags() / setShowWhenLocked() 实现，见 PopupActivity.kt -->
-        <activity
-            android:name=".PopupActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.CommSystem.Popup" />
-
         <service
             android:name=".ConnectionService"
             android:exported="false"

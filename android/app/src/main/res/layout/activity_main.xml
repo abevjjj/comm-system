@@ -58,12 +58,58 @@
         android:layout_weight="1">
 
         <!-- 视图0: 联系人列表 -->
-        <ListView
-            android:id="@+id/contactListView"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#21262D"
-            android:dividerHeight="1dp" />
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/contactListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#21262D"
+                android:dividerHeight="1dp" />
+
+            <LinearLayout
+                android:id="@+id/contactErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#0D1117"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠ 加载联系人失败"
+                    android:textColor="#F85149"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/contactErrorDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:textColor="#9AA6B2"
+                    android:textIsSelectable="true"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/contactRetryBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_btn_primary"
+                    android:paddingHorizontal="20dp"
+                    android:text="重试"
+                    android:textColor="#FFFFFF" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <!-- 视图1: 聊天区 -->
         <LinearLayout

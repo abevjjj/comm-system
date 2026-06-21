@@ -34,24 +34,24 @@ class ApiClient(private val context: Context) {
     /** 同步执行请求，返回解析后的 JSONObject；调用方需自行切换到后台线程 */
     @Throws(ApiException::class)
     private fun execute(path: String, method: String, body: JSONObject?): JSONObject {
-        val urlStr = baseUrl() + path
         if (baseUrl().isEmpty()) throw ApiException("未配置服务器地址")
-
-        val reqBuilder = Request.Builder().url(urlStr)
-        val token = TokenStore.getToken(context)
-        if (!token.isNullOrEmpty()) {
-            reqBuilder.addHeader("Authorization", "Bearer $token")
-        }
-
-        val reqBody = body?.toString()?.toRequestBody(JSON)
-        when (method) {
-            "GET" -> reqBuilder.get()
-            "POST" -> reqBuilder.post(reqBody ?: "{}".toRequestBody(JSON))
-            "PATCH" -> reqBuilder.patch(reqBody ?: "{}".toRequestBody(JSON))
-            "DELETE" -> reqBuilder.delete()
-        }
+        val urlStr = baseUrl() + path
 
         try {
+            val reqBuilder = Request.Builder().url(urlStr)
+            val token = TokenStore.getToken(context)
+            if (!token.isNullOrEmpty()) {
+                reqBuilder.addHeader("Authorization", "Bearer $token")
+            }
+
+            val reqBody = body?.toString()?.toRequestBody(JSON)
+            when (method) {
+                "GET" -> reqBuilder.get()
+                "POST" -> reqBuilder.post(reqBody ?: "{}".toRequestBody(JSON))
+                "PATCH" -> reqBuilder.patch(reqBody ?: "{}".toRequestBody(JSON))
+                "DELETE" -> reqBuilder.delete()
+            }
+
             client.newCall(reqBuilder.build()).execute().use { resp ->
                 val text = resp.body?.string() ?: "{}"
                 val json = try { JSONObject(text) } catch (e: Exception) { JSONObject() }
@@ -65,6 +65,11 @@ class ApiClient(private val context: Context) {
             throw e
         } catch (e: IOException) {
             throw ApiException("网络连接失败: ${e.message}")
+        } catch (e: Exception) {
+            // 捕获非IOException的异常（例如URL格式非法时OkHttp抛出的IllegalArgumentException），
+            // 统一包装成ApiException，保留原始异常类型名，便于诊断UI展示精确信息，
+            // 不让任何异常路径逃逸出"格式化清晰提示"的范围
+            throw ApiException("${e.javaClass.simpleName}: ${e.message} [url=$urlStr]")
         }
     }
 

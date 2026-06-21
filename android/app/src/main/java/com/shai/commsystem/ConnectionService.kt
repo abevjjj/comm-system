@@ -148,9 +148,13 @@ class ConnectionService : Service(), WsCallback {
         androidx.localbroadcastmanager.content.LocalBroadcastManager
             .getInstance(this).sendBroadcast(localIntent)
 
-        // type == new_message 表示该用户开启了弹窗提醒，触发强提醒全屏弹窗
+        // type == new_message 表示该用户开启了弹窗提醒，触发霸屏悬浮窗提醒
+        // （进入队列，若当前已有弹窗在展示则排队等待，见 OverlayPopupManager）
         if (type == "new_message") {
-            PopupActivity.show(this, messageId, senderId, senderName, content)
+            OverlayPopupManager.enqueue(
+                this,
+                PopupMessage(messageId, senderId, senderName, content)
+            )
         }
 
         updateNotification("最新消息来自 $senderName")

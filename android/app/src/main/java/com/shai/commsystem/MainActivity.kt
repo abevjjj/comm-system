@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apiClient: ApiClient
     private lateinit var viewFlipper: ViewFlipper
     private lateinit var contactListView: ListView
+    private lateinit var contactErrorView: android.view.View
+    private lateinit var contactErrorDetail: TextView
     private lateinit var messageListView: ListView
     private lateinit var messageInput: EditText
     private lateinit var chatPeerNameView: TextView
@@ -118,6 +120,8 @@ class MainActivity : AppCompatActivity() {
         apiClient = ApiClient(this)
         viewFlipper = findViewById(R.id.viewFlipper)
         contactListView = findViewById(R.id.contactListView)
+        contactErrorView = findViewById(R.id.contactErrorView)
+        contactErrorDetail = findViewById(R.id.contactErrorDetail)
         messageListView = findViewById(R.id.messageListView)
         messageInput = findViewById(R.id.messageInput)
         chatPeerNameView = findViewById(R.id.chatPeerName)
@@ -129,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         contactListView.setOnItemClickListener { _, _, position, _ ->
             openChat(contacts[position])
         }
+        findViewById<android.widget.Button>(R.id.contactRetryBtn).setOnClickListener { loadContacts() }
 
         messageAdapter = MessageAdapter(this, emptyList(), myUserId) { msg -> onAckMessage(msg) }
         messageListView.adapter = messageAdapter
@@ -142,14 +147,38 @@ class MainActivity : AppCompatActivity() {
 
         requestNotificationPermissionIfNeeded()
         requestIgnoreBatteryOptimizationIfTabletMode()
+        requestOverlayPermissionIfNeeded()
         startConnectionService()
-        loadContacts()
-        loadOnlineUsersSnapshot()
 
-        // 从悬浮窗"查看会话"按钮跳转过来时，直接打开对应会话
+        // 从悬浮窗"查看会话"按钮跳转过来时，需要在 loadContacts() 发起请求之前
+        // 就设置好目标用户ID，否则异步请求先于这行代码完成时，会丢失自动跳转的意图
+        // （这是真实的时序竞态问题，曾导致"点击查看会话仍卡在联系人列表"的现象）
         val openChatWith = intent.getIntExtra("openChatWith", -1)
         if (openChatWith > 0) {
             pendingOpenChatWith = openChatWith
+        }
+
+        loadContacts()
+        loadOnlineUsersSnapshot()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        // MainActivity 实例已存在时（比如App在后台运行，用户点击弹窗的"查看会话"），
+        // 系统会复用现有实例并回调这里，而不是重新走 onCreate()。
+        // 此时联系人列表通常已经加载完毕，可以直接尝试打开目标会话；
+        // 若联系人列表还没加载出来（比如onCreate的loadContacts还没返回），
+        // 则走pendingOpenChatWith这条路径，等loadContacts完成后自动跳转。
+        val openChatWith = intent.getIntExtra("openChatWith", -1)
+        if (openChatWith > 0) {
+            val target = contacts.find { it.id == openChatWith }
+            if (target != null) {
+                openChat(target)
+            } else {
+                pendingOpenChatWith = openChatWith
+                loadContacts()
+            }
         }
     }
 
@@ -214,6 +243,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 悬浮窗权限引导：这是"消息霸屏显示、覆盖所有应用"功能的硬性前提。
+     * 未授权时该功能会静默失效（OverlayPopupManager内部会跳过展示），
+     * 用户不容易察觉为什么"收不到弹窗提醒"，因此这里主动弹窗说明并引导前往设置。
+     * 仅在权限缺失时弹一次（每次进入主界面检测，已授权则不会再次打扰）。
+     */
+    private fun requestOverlayPermissionIfNeeded() {
+        if (OverlayPermissionHelper.hasPermission(this)) return
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("需要悬浮窗权限")
+            .setMessage("为了让消息能在锁屏和其他应用上层弹出提醒，需要授权\"显示在其他应用上层\"权限。请在接下来的系统设置页面中开启此权限。")
+            .setCancelable(true)
+            .setPositiveButton("前往设置") { _, _ ->
+                OverlayPermissionHelper.requestPermission(this)
+            }
+            .setNegativeButton("暂不开启", null)
+            .show()
+    }
+
     private fun startConnectionService() {
         // 保活强度（手机/平板·电脑）在 ConnectionService 内部根据 TokenStore.getDeviceRole 自行判断，
         // 这里只需正常拉起前台服务即可
@@ -239,6 +288,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadContacts() {
+        contactErrorView.visibility = android.view.View.GONE
+        contactListView.visibility = android.view.View.VISIBLE
+
         scope.launch {
             try {
                 val resp = withContext(Dispatchers.IO) { apiClient.getContacts() }
@@ -263,7 +315,18 @@ class MainActivity : AppCompatActivity() {
                     pendingOpenChatWith = -1
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "加载联系人失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                // 展示详细、可长按复制的错误信息（替代一闪而过的Toast），便于精确定位问题：
+                // - ApiClient.ApiException 携带 statusCode，能区分是HTTP错误还是网络层异常
+                // - 其他异常类型（如JSON解析失败）也完整打印类名+message，避免信息丢失
+                val detail = when (e) {
+                    is ApiClient.ApiException ->
+                        "HTTP ${e.statusCode}: ${e.message}\n服务器地址: ${TokenStore.getServerUrl(this@MainActivity)}"
+                    else ->
+                        "${e.javaClass.simpleName}: ${e.message}\n服务器地址: ${TokenStore.getServerUrl(this@MainActivity)}"
+                }
+                contactErrorDetail.text = detail
+                contactErrorView.visibility = android.view.View.VISIBLE
+                contactListView.visibility = android.view.View.GONE
             }
         }
     }
@@ -355,6 +418,7 @@ class MainActivity : AppCompatActivity() {
         scope.launch {
             try { withContext(Dispatchers.IO) { apiClient.logout() } } catch (e: Exception) {}
             TokenStore.clearSession(this@MainActivity)
+            OverlayPopupManager.clearAll()
             stopService(Intent(this@MainActivity, ConnectionService::class.java))
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
