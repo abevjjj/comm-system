@@ -9,15 +9,20 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 
+/**
+ * 注意：android.widget.ArrayAdapter 的构造函数会直接持有传入 List 的引用
+ * （不会做拷贝），后续 clear()/addAll() 会直接修改这个引用对象。
+ * 若传入 Kotlin 不可变集合（如 emptyList()），调用 clear() 会抛出
+ * UnsupportedOperationException。这里用 ArrayList(...) 包一层确保可变。
+ */
 class MessageAdapter(
     context: Context,
-    private var items: List<ChatMessage>,
+    initialItems: List<ChatMessage>,
     private val myUserId: Int,
     private val onAckClick: (ChatMessage) -> Unit
-) : ArrayAdapter<ChatMessage>(context, R.layout.item_message, items) {
+) : ArrayAdapter<ChatMessage>(context, R.layout.item_message, ArrayList(initialItems)) {
 
     fun update(newItems: List<ChatMessage>) {
-        items = newItems
         clear()
         addAll(newItems)
         notifyDataSetChanged()
@@ -34,7 +39,7 @@ class MessageAdapter(
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.item_message, parent, false)
 
-        val msg = items[position]
+        val msg = getItem(position) ?: return view
         val mine = msg.senderId == myUserId
 
         val outerContainer = view as LinearLayout

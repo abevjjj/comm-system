@@ -128,14 +128,14 @@ class MainActivity : AppCompatActivity() {
         connDot = findViewById(R.id.connDot)
         connLabel = findViewById(R.id.connLabel)
 
-        contactAdapter = ContactAdapter(this, emptyList(), onlineUserIds)
+        contactAdapter = ContactAdapter(this, mutableListOf(), onlineUserIds)
         contactListView.adapter = contactAdapter
         contactListView.setOnItemClickListener { _, _, position, _ ->
             openChat(contacts[position])
         }
         findViewById<android.widget.Button>(R.id.contactRetryBtn).setOnClickListener { loadContacts() }
 
-        messageAdapter = MessageAdapter(this, emptyList(), myUserId) { msg -> onAckMessage(msg) }
+        messageAdapter = MessageAdapter(this, mutableListOf(), myUserId) { msg -> onAckMessage(msg) }
         messageListView.adapter = messageAdapter
 
         findViewById<ImageButton>(R.id.backBtn).setOnClickListener {
